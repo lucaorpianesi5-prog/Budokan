@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BUDOKAN 武道館 — Artes Marciales & Deportes de Contacto</title>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -1215,107 +1214,43 @@
 <script>
 // ── CONFIG ──
 const SHEET_ID = '1qNYw6OxQq3RHeJhlw9edNvA1aDONnnUrk_N0Y7II2YM';
-const CLIENT_ID = '349654954450-p8rua8o64semm4nd934dbl5mq29hcu3l.apps.googleusercontent.com';
-const SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
-let accessToken = null;
-let tokenClient = null;
+const API_KEY = 'AIzaSyAKq9_8xg3grrfbBTFJt2QD2ujiW6c19zw';
 
-// ── PRODUCTS DATA (fallback mientras carga Sheets) ──
+// ── PRODUCTS DATA ──
 let PRODUCTS = [];
 
-// ── INIT GOOGLE AUTH ──
-function initGoogleAuth() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPE,
-    callback: (resp) => {
-      if (resp.error) { console.error(resp); return; }
-      accessToken = resp.access_token;
-      loadProducts();
-    }
-  });
-  // Intentar cargar sin login primero (modo público de lectura)
-  loadProductsPublic();
-}
-
-// ── CARGAR PRODUCTOS (modo público, sin auth) ──
-async function loadProductsPublic() {
-  try {
-    const range = 'A2:I100';
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=AIzaSyD-placeholder`;
-    // Usar fetch con API key pública no funciona sin key, usamos el modo con auth
-    await loadProductsAuth();
-  } catch(e) {
-    showLoading(false);
-    renderProducts();
-  }
-}
-
-// ── CARGAR PRODUCTOS (con auth OAuth) ──
-async function loadProductsAuth() {
+// ── CARGAR PRODUCTOS (API Key pública) ──
+async function loadProducts() {
   showLoading(true);
-  if (!accessToken) {
-    tokenClient.requestAccessToken({ prompt: '' });
-    return;
-  }
   try {
     const range = 'A2:I100';
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+    const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + range + '?key=' + API_KEY;
+    const res = await fetch(url);
     const data = await res.json();
     if (data.values) {
       PRODUCTS = data.values
-        .filter(r => r[0] && r[1])
-        .map(r => ({
-          id: parseInt(r[0]),
-          nombre: r[1] || '',
-          marca: r[2] || '',
-          precio: parseInt(r[3]) || 0,
-          precio_original: r[4] ? parseInt(r[4]) : null,
-          categoria: r[5] || 'otros',
-          imagen: r[6] || '',
-          stock: parseInt(r[7]) || 0,
-          badge: r[8] || null,
-          isFav: false
-        }));
+        .filter(function(r) { return r[0] && r[1]; })
+        .map(function(r) {
+          return {
+            id: parseInt(r[0]),
+            nombre: r[1] || '',
+            marca: r[2] || '',
+            precio: parseInt(r[3]) || 0,
+            precio_original: r[4] ? parseInt(r[4]) : null,
+            categoria: r[5] || 'otros',
+            imagen: r[6] || '',
+            stock: parseInt(r[7]) || 0,
+            badge: r[8] || null,
+            isFav: false
+          };
+        });
     }
     showLoading(false);
     renderProducts();
   } catch(e) {
-    console.error('Error cargando Sheets:', e);
+    console.error('Error cargando productos:', e);
     showLoading(false);
     renderProducts();
-  }
-}
-
-// ── DESCONTAR STOCK EN SHEETS ──
-async function descontarStock(itemsVendidos) {
-  if (!accessToken) return;
-  try {
-    // Leer fila de cada producto y actualizar stock
-    for (const item of itemsVendidos) {
-      const rowIndex = item.id + 1; // fila en sheets (id 1 = fila 2)
-      const range = `H${rowIndex}`;
-      const nuevoStock = Math.max(0, item.stock - item.qty);
-      await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?valueInputOption=RAW`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ values: [[nuevoStock]] })
-        }
-      );
-      // Actualizar localmente también
-      const p = PRODUCTS.find(p => p.id === item.id);
-      if (p) p.stock = nuevoStock;
-    }
-  } catch(e) {
-    console.error('Error actualizando stock:', e);
   }
 }
 
@@ -1323,17 +1258,20 @@ async function descontarStock(itemsVendidos) {
 function showLoading(show) {
   const grid = document.getElementById('productGrid');
   if (show) {
-    grid.innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6B6B6B;">
-        <div style="font-family:'Noto Serif JP',serif;font-size:48px;color:rgba(192,57,43,0.2);margin-bottom:16px;">武</div>
-        <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;">Cargando productos...</div>
-      </div>`;
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6B6B6B;">' +
+      '<div style="font-family:Noto Serif JP,serif;font-size:48px;color:rgba(192,57,43,0.2);margin-bottom:16px;">武</div>' +
+      '<div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;">Cargando productos...</div>' +
+      '</div>';
   }
 }
 
-// ── SIGN IN BUTTON ──
-function signIn() {
-  tokenClient.requestAccessToken({ prompt: 'consent' });
+// ── DESCONTAR STOCK (actualización manual en Sheets) ──
+function descontarStock(itemsVendidos) {
+  // El stock se descuenta manualmente en Sheets al ver el pedido por WhatsApp
+  itemsVendidos.forEach(function(item) {
+    var p = PRODUCTS.find(function(p) { return p.id === item.id; });
+    if (p) p.stock = Math.max(0, p.stock - item.qty);
+  });
 }
 
 let cart = [];
@@ -1609,17 +1547,7 @@ function confirmarPago(urlMP, urlWA) {
 
 // ── INIT ──
 window.onload = function() {
-  if (typeof google !== 'undefined') {
-    initGoogleAuth();
-  } else {
-    // Si GIS no cargó, mostrar botón de login
-    showLoading(false);
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#6B6B6B;">
-      <div style="font-family:'Noto Serif JP',serif;font-size:48px;color:rgba(192,57,43,0.2);margin-bottom:16px;">武</div>
-      <button onclick="signIn()" style="background:#C0392B;color:white;border:none;padding:12px 28px;cursor:pointer;border-radius:2px;font-family:Inter,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;">🔑 Ver productos</button>
-    </div>`;
-  }
+  loadProducts();
   updateCart();
 };
 </script>
