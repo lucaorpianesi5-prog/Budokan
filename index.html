@@ -1023,7 +1023,7 @@
 <body>
 
 <!-- TOPBAR -->
-<div class="topbar">⚔ Envío gratis en compras mayores a $30.000 · Descuentos exclusivos esta semana ⚔</div>
+<div class="topbar">⚔ Pedidos por WhatsApp: +54 351-686-4308 · Sarmiento 375, Córdoba ⚔</div>
 
 <!-- HEADER -->
 <header>
@@ -1054,14 +1054,12 @@
 <nav class="nav-cats">
   <div class="nav-inner" id="navCats">
     <div class="nav-cat active" onclick="filterCategory('todos', this)">Todos</div>
-    <div class="nav-cat" onclick="filterCategory('karate', this)">Karate</div>
-    <div class="nav-cat" onclick="filterCategory('judo', this)">Judo & BJJ</div>
-    <div class="nav-cat" onclick="filterCategory('muay-thai', this)">Muay Thai</div>
-    <div class="nav-cat" onclick="filterCategory('boxing', this)">Boxeo</div>
-    <div class="nav-cat" onclick="filterCategory('kendo', this)">Kendo</div>
-    <div class="nav-cat" onclick="filterCategory('proteccion', this)">Protección</div>
-    <div class="nav-cat" onclick="filterCategory('ropa', this)">Ropa</div>
+    <div class="nav-cat" onclick="filterCategory('equipamiento', this)">Equipamiento</div>
+    <div class="nav-cat" onclick="filterCategory('artes-marciales', this)">Artes Marciales</div>
+    <div class="nav-cat" onclick="filterCategory('indumentaria', this)">Indumentaria</div>
+    <div class="nav-cat" onclick="filterCategory('protecciones', this)">Protecciones</div>
     <div class="nav-cat" onclick="filterCategory('accesorios', this)">Accesorios</div>
+    <div class="nav-cat" onclick="filterCategory('venum', this)">⚡ Venum</div>
   </div>
 </nav>
 
@@ -1186,7 +1184,7 @@
   </div>
   <div class="footer-bottom">
     <span class="footer-copy">© 2025 <span>BUDOKAN 武道館</span> · Todos los derechos reservados</span>
-    <span class="footer-copy">Córdoba, Argentina</span>
+    <span class="footer-copy">Sarmiento 375, Córdoba · +54 351-686-4308</span>
   </div>
 </footer>
 
@@ -1203,7 +1201,7 @@
       <span class="cart-total-label">Total</span>
       <span class="cart-total-amount" id="cartTotal">$0</span>
     </div>
-    <button class="checkout-btn">Finalizar compra →</button>
+    <button class="checkout-btn" onclick="checkout()">Finalizar compra →</button>
   </div>
 </div>
 
@@ -1213,22 +1211,27 @@
 <script>
 // ── PRODUCTS DATA ──
 const PRODUCTS = [
-  { id:1,  name: "Kimono Karate WKF Competición", brand: "Tokaido", price: 38500, original: 52000, cat: "karate", badge: "promo", icon: "🥋", kanji: "空", rating: 5, reviews: 124, isFav: false },
-  { id:2,  name: "Guantes Muay Thai Pro 12oz", brand: "Yokkao", price: 24900, original: null, cat: "muay-thai", badge: "nuevo", icon: "🥊", kanji: "拳", rating: 5, reviews: 89, isFav: false },
-  { id:3,  name: "Judogi Azul IJF Approved", brand: "Ippon Gear", price: 41000, original: 55000, cat: "judo", badge: "promo", icon: "🥋", kanji: "柔", rating: 4, reviews: 67, isFav: false },
-  { id:4,  name: "Shinai Bambú 38 Kendo", brand: "Tozando", price: 12500, original: null, cat: "kendo", badge: null, icon: "⚔️", kanji: "剣", rating: 5, reviews: 43, isFav: false },
-  { id:5,  name: "Casco Boxeo Full Protection", brand: "Cleto Reyes", price: 19800, original: 24500, cat: "boxing", badge: "promo", icon: "🛡️", kanji: "守", rating: 4, reviews: 156, isFav: false },
-  { id:6,  name: "Rashguard Manga Larga BJJ", brand: "Tatami", price: 8900, original: null, cat: "judo", badge: "nuevo", icon: "👕", kanji: "技", rating: 5, reviews: 201, isFav: false },
-  { id:7,  name: "Protector Tibias Muay Thai", brand: "Fairtex", price: 15600, original: 19000, cat: "proteccion", badge: "promo", icon: "🦵", kanji: "足", rating: 4, reviews: 78, isFav: false },
-  { id:8,  name: "Cinturón Negro Seda Bordado", brand: "Shureido", price: 6500, original: null, cat: "accesorios", badge: null, icon: "🖤", kanji: "帯", rating: 5, reviews: 312, isFav: false },
-  { id:9,  name: "Bokken Roble Japonés 101cm", brand: "Kingfisher", price: 9200, original: 11000, cat: "kendo", badge: "promo", icon: "🗡️", kanji: "木", rating: 4, reviews: 55, isFav: false },
-  { id:10, name: "Short MMA Competición", brand: "Venum", price: 7400, original: null, cat: "ropa", badge: "nuevo", icon: "🩲", kanji: "道", rating: 5, reviews: 189, isFav: false },
-  { id:11, name: "Vendas Boxeo Gel 4.5m", brand: "Title", price: 3200, original: 4100, cat: "accesorios", badge: "promo", icon: "🩹", kanji: "手", rating: 4, reviews: 445, isFav: false },
-  { id:12, name: "Protector Bucal Pro", brand: "Shock Doctor", price: 4100, original: null, cat: "proteccion", badge: null, icon: "😷", kanji: "口", rating: 5, reviews: 98, isFav: false },
-  { id:13, name: "Kimono BJJ Navy Premium", brand: "Tatami", price: 35000, original: 45000, cat: "judo", badge: "promo", icon: "🥋", kanji: "柔", rating: 5, reviews: 77, isFav: false },
-  { id:14, name: "Bolsa Punching 90cm Rellena", brand: "Everlast", price: 29800, original: null, cat: "boxing", badge: "nuevo", icon: "👊", kanji: "打", rating: 4, reviews: 134, isFav: false },
-  { id:15, name: "Do-Gi Karate Kata Luxe", brand: "Kamikaze", price: 42000, original: 54000, cat: "karate", badge: "promo", icon: "🥋", kanji: "形", rating: 5, reviews: 61, isFav: false },
-  { id:16, name: "Pantalón Hakama Iaido Negro", brand: "Tozando", price: 18700, original: null, cat: "kendo", badge: null, icon: "🥋", kanji: "袴", rating: 4, reviews: 38, isFav: false },
+  { id:1,  name: "Guante MMA Sparring Budokan", brand: "Budokan", price: 65000, original: null, cat: "equipamiento", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/04/09150833/MMA-Sparring-2-300x300.webp", kanji: "拳", rating: 5, reviews: 87, isFav: false },
+  { id:2,  name: "Tibial con Empeine Budokan Luxury", brand: "Budokan", price: 93500, original: null, cat: "protecciones", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/04/09143404/Tibial-Gold-300x300.webp", kanji: "足", rating: 5, reviews: 64, isFav: false },
+  { id:3,  name: "Bucal Profesional Budokan", brand: "Budokan", price: 12000, original: null, cat: "protecciones", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/04/09144851/Bucal-2-300x300.webp", kanji: "守", rating: 5, reviews: 112, isFav: false },
+  { id:4,  name: "Bermuda Venum «Minotaur»", brand: "Venum", price: 129900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125238/Minotaur-1-300x300.jpeg", kanji: "道", rating: 5, reviews: 43, isFav: false },
+  { id:5,  name: "Bermuda Venum «Plasma»", brand: "Venum", price: 129900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125435/Plasma-11-1-300x300.jpeg", kanji: "道", rating: 5, reviews: 38, isFav: false },
+  { id:6,  name: "Bermuda Venum «Tempest 2.0» Red", brand: "Venum", price: 129900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125501/Tempest-2.0-2-1-300x300.jpeg", kanji: "道", rating: 5, reviews: 55, isFav: false },
+  { id:7,  name: "Bermuda Venum «Werewolf»", brand: "Venum", price: 129900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125702/Werewolf-9-1-300x300.jpeg", kanji: "道", rating: 5, reviews: 49, isFav: false },
+  { id:8,  name: "Short Calza Venum «Minotaur»", brand: "Venum", price: 98000, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125215/Minotaur-2-1-300x300.jpeg", kanji: "技", rating: 5, reviews: 71, isFav: false },
+  { id:9,  name: "Soga de Cuero Adidas", brand: "Adidas", price: 15000, original: 32000, cat: "accesorios", badge: "promo", img: "https://www.budokanweb.com/wp-content/uploads/2020/01/ADIJRW01-300x300.jpg", kanji: "練", rating: 4, reviews: 29, isFav: false },
+  { id:10, name: "Rashguard Lycra Lion «Armor»", brand: "Lion", price: 45900, original: 54000, cat: "indumentaria", badge: "promo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2020/06/12123132/Lycra-MC-Cyan-Armor-300x300.jpeg", kanji: "技", rating: 5, reviews: 96, isFav: false },
+  { id:11, name: "Rashguard Lycra Venum «Dragonflight» White", brand: "Venum", price: 119900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28124722/Dragonflight-2-1-300x300.jpeg", kanji: "龍", rating: 5, reviews: 61, isFav: false },
+  { id:12, name: "Rashguard Lycra Venum «Plasma»", brand: "Venum", price: 119900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125414/Plasma-9-1-300x300.jpeg", kanji: "龍", rating: 5, reviews: 44, isFav: false },
+  { id:13, name: "Rashguard Lycra Venum «Werewolf»", brand: "Venum", price: 119900, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125640/Werewolf-7-1-300x300.jpeg", kanji: "龍", rating: 5, reviews: 52, isFav: false },
+  { id:14, name: "Remera sin mangas Venum «Giant Dragon»", brand: "Venum", price: 61200, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125124/Giant-Dragon-3-1-300x300.jpeg", kanji: "龍", rating: 5, reviews: 38, isFav: false },
+  { id:15, name: "Remera sin mangas Venum «Tempest»", brand: "Venum", price: 61200, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125424/Plasma-10-1-300x300.jpeg", kanji: "技", rating: 5, reviews: 41, isFav: false },
+  { id:16, name: "Remera Venum «Giant Dragon»", brand: "Venum", price: 72200, original: null, cat: "indumentaria", badge: null, img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/01/28125136/Giant-Dragon-4-1-300x300.jpeg", kanji: "龍", rating: 5, reviews: 57, isFav: false },
+  { id:17, name: "Makiwara de pared Profesional", brand: "Budokan", price: 94000, original: null, cat: "accesorios", badge: "nuevo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/06/09151405/Makiwara-Pared-C-300x300.jpeg", kanji: "打", rating: 5, reviews: 18, isFav: false },
+  { id:18, name: "Makiwara de pie Profesional", brand: "Budokan", price: 200000, original: null, cat: "accesorios", badge: "nuevo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/06/09151414/Makiwara-Pie-A-4-300x300.jpeg", kanji: "打", rating: 5, reviews: 12, isFav: false },
+  { id:19, name: "Kimono Jiu Jitsu Bronx", brand: "Bronx", price: 180000, original: null, cat: "artes-marciales", badge: "nuevo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/05/28151402/WhatsApp-Image-2026-05-28-at-3.07.51-PM-300x300.jpeg", kanji: "柔", rating: 5, reviews: 9, isFav: false },
+  { id:20, name: "Cabezal de box Bronx PRO", brand: "Bronx", price: 98000, original: null, cat: "protecciones", badge: "nuevo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/05/28145515/Cabezal-Pro-Bronx-300x300.jpeg", kanji: "守", rating: 5, reviews: 14, isFav: false },
+  { id:21, name: "Zapatillas Taekwondo", brand: "Budokan", price: 95000, original: null, cat: "artes-marciales", badge: "nuevo", img: "https://budokanwebsite.s3.amazonaws.com/wp-content/uploads/2026/05/21152801/WhatsApp-Image-2026-05-20-at-2.38.13-PM-1-300x300.jpeg", kanji: "道", rating: 5, reviews: 7, isFav: false },
 ];
 
 let cart = [];
@@ -1245,7 +1248,9 @@ function formatPrice(n) {
 function getFilteredProducts() {
   let list = [...PRODUCTS];
 
-  if (currentCategory !== 'todos') {
+  if (currentCategory === 'venum') {
+    list = list.filter(p => p.brand === 'Venum');
+  } else if (currentCategory !== 'todos') {
     list = list.filter(p => p.cat === currentCategory);
   }
 
@@ -1263,6 +1268,7 @@ function getFilteredProducts() {
   if (currentFilter === 'precio-asc') list.sort((a,b) => a.price - b.price);
   if (currentFilter === 'precio-desc') list.sort((a,b) => b.price - a.price);
   if (currentFilter === 'mejor-valorado') list.sort((a,b) => b.reviews - a.reviews);
+  if (currentFilter === 'venum') list = list.filter(p => p.brand === 'Venum');
 
   return list;
 }
@@ -1281,8 +1287,8 @@ function renderProducts() {
     const isFav = favorites.has(p.id);
     return `
     <div class="product-card" onclick="addToCart(${p.id}, event)">
-      <div class="product-img-placeholder">
-        <span class="product-img-icon">${p.icon}</span>
+      <div class="product-img-placeholder" style="position:relative;background:#1a1a1a;">
+        <img src="${p.img}" alt="${p.name}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy">
         <span class="product-img-kanji">${p.kanji}</span>
         ${p.badge ? `<span class="badge ${p.badge === 'nuevo' ? 'new' : 'promo'}">${p.badge === 'nuevo' ? 'NUEVO' : '-'+disc+'%'}</span>` : ''}
         <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${p.id}, event)">♥</button>
@@ -1377,7 +1383,7 @@ function updateCart() {
   }
   el.innerHTML = cart.map(i => `
     <div class="cart-item">
-      <div class="cart-item-img">${i.icon}</div>
+      <div class="cart-item-img" style="overflow:hidden;border-radius:3px;"><img src="${i.img}" style="width:60px;height:60px;object-fit:cover;"></div>
       <div class="cart-item-info">
         <div class="cart-item-name">${i.name}</div>
         <div class="cart-item-price">${formatPrice(i.price)}</div>
@@ -1418,6 +1424,112 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── CHECKOUT ──
+function checkout() {
+  if (cart.length === 0) {
+    showToast('⚠️ Tu carrito está vacío');
+    return;
+  }
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  // Armar detalle del pedido para WhatsApp
+  const lineas = cart.map(i => `• ${i.name} x${i.qty} — ${formatPrice(i.price * i.qty)}`).join('%0A');
+  const totalStr = formatPrice(total);
+  const fecha = new Date().toLocaleDateString('es-AR');
+
+  const mensajeWA = 
+    `🥋 *Nuevo pedido BUDOKAN* 🥋%0A` +
+    `📅 ${fecha}%0A%0A` +
+    `${lineas}%0A%0A` +
+    `💰 *TOTAL: ${totalStr}*%0A%0A` +
+    `_El cliente completará el pago por MercadoPago._`;
+
+  const numeroWA = '5493516864308';
+  const urlWA = `https://wa.me/${numeroWA}?text=${mensajeWA}`;
+
+  // Link de MercadoPago de Budokan
+  const urlMP = 'https://link.mercadopago.com.ar/budokanstore';
+
+  // Mostrar modal de confirmación
+  mostrarModalCheckout(total, urlMP, urlWA);
+}
+
+function mostrarModalCheckout(total, urlMP, urlWA) {
+  // Crear modal
+  const modal = document.createElement('div');
+  modal.id = 'checkoutModal';
+  modal.style.cssText = `
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 400; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  `;
+
+  modal.innerHTML = \`
+    <div style="background: #1C1C1C; border: 1px solid #2a2a2a; border-top: 3px solid #C0392B;
+                border-radius: 6px; padding: 32px; max-width: 420px; width: 100%; text-align: center;">
+      
+      <div style="font-family: 'Noto Serif JP', serif; font-size: 40px; color: rgba(192,57,43,0.3); margin-bottom: 8px;">武</div>
+      
+      <h2 style="font-family: 'Noto Serif JP', serif; font-size: 20px; color: white; margin-bottom: 8px;">
+        Confirmar pedido
+      </h2>
+      
+      <p style="color: #6B6B6B; font-size: 13px; margin-bottom: 24px;">
+        Total a pagar
+      </p>
+
+      <div style="font-family: 'Noto Serif JP', serif; font-size: 36px; font-weight: 700;
+                  color: #C0392B; margin-bottom: 28px;">
+        \${formatPrice(total)}
+      </div>
+
+      <p style="color: #888; font-size: 12px; line-height: 1.7; margin-bottom: 28px;">
+        Al continuar se abrirán dos ventanas:<br>
+        <strong style="color: #F5F0E8;">① MercadoPago</strong> para completar el pago<br>
+        <strong style="color: #25D366;">② WhatsApp</strong> para confirmar tu pedido
+      </p>
+
+      <button onclick="confirmarPago('${urlMP}', '${urlWA}')" style="
+        width: 100%; background: #C0392B; color: white; border: none;
+        padding: 14px; font-family: 'Inter', sans-serif; font-size: 14px;
+        font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+        cursor: pointer; border-radius: 2px; margin-bottom: 10px;
+        transition: background .2s;
+      " onmouseover="this.style.background='#922B21'" onmouseout="this.style.background='#C0392B'">
+        💳 Pagar con MercadoPago
+      </button>
+
+      <button onclick="document.getElementById('checkoutModal').remove()" style="
+        width: 100%; background: transparent; color: #6B6B6B; border: 1px solid #333;
+        padding: 10px; font-family: 'Inter', sans-serif; font-size: 12px;
+        cursor: pointer; border-radius: 2px; letter-spacing: 1px;
+      ">
+        Volver al carrito
+      </button>
+    </div>
+  \`;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+function confirmarPago(urlMP, urlWA) {
+  // Abrir MercadoPago
+  window.open(urlMP, '_blank');
+  // Abrir WhatsApp con detalle del pedido (pequeño delay para no bloquear popups)
+  setTimeout(() => window.open(urlWA, '_blank'), 800);
+  // Cerrar modal y carrito
+  document.getElementById('checkoutModal')?.remove();
+  // Vaciar carrito
+  cart = [];
+  updateCart();
+  toggleCart();
+  showToast('✅ ¡Redirigiendo a MercadoPago y WhatsApp!');
 }
 
 // ── INIT ──
