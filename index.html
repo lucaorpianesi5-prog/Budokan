@@ -1394,35 +1394,33 @@ function renderProducts() {
 
   const slice = list.slice(0, visibleCount);
 
-  grid.innerHTML = slice.map(p => {
-    const disc = p.precio_original ? Math.round((1 - p.precio/p.precio_original)*100) : 0;
-    const isFav = favorites.has(p.id);
-    const sinStock = p.stock === 0;
-    return `
-    <div class="product-card${sinStock ? ' out-of-stock' : ''}" onclick="${sinStock ? '' : `addToCart(${p.id}, event)`}">
-      <div class="product-img-placeholder" style="position:relative;background:#1a1a1a;">
-        <img src="${p.imagen}" alt="${p.nombre}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;${sinStock ? 'opacity:0.4;' : ''}" loading="lazy">
-        ${sinStock ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><span style='background:rgba(0,0,0,0.7);color:#888;font-size:11px;padding:6px 12px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;'>Sin stock</span></div>' : ''}
-        ${p.badge && !sinStock ? `<span class="badge ${p.badge === 'nuevo' ? 'new' : 'promo'}">${p.badge === 'nuevo' ? 'NUEVO' : '-'+disc+'%'}</span>` : ''}
-        ${p.stock > 0 && p.stock <= 3 ? `<span class="badge" style="background:#B8960C;top:auto;bottom:8px;">¡Últimas ${p.stock}!</span>` : ''}
-        <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${p.id}, event)">♥</button>
-      </div>
-      <div class="product-info">
-        <div class="product-brand">${p.marca}</div>
-        <div class="product-name">${p.nombre}</div>
-        <div class="product-price-row">
-          <span class="price-current">${formatPrice(p.precio)}</span>
-          ${p.precio_original ? `<span class="price-original">${formatPrice(p.precio_original)}</span><span class="price-discount">-${disc}%</span>` : ''}
-        </div>
-        <div class="product-meta">
-          <span><span class="stars">★★★★★</span><span class="reviews">(${Math.floor(Math.random()*200)+10})</span></span>
-          ${sinStock
-            ? '<span style="font-size:11px;color:#555;">Sin stock</span>'
-            : `<button class="add-to-cart-btn" onclick="addToCart(${p.id}, event)">+ Agregar</button>`
-          }
-        </div>
-      </div>
-    </div>`;
+  grid.innerHTML = slice.map(function(p) {
+    var disc = p.precio_original ? Math.round((1 - p.precio/p.precio_original)*100) : 0;
+    var isFav = favorites.has(p.id);
+    var sinStock = p.stock === 0;
+    var cardClass = sinStock ? 'product-card out-of-stock' : 'product-card';
+    var clickFn = sinStock ? '' : 'addToCart(' + p.id + ', event)';
+    var badgeHtml = (p.badge && !sinStock) ? '<span class="badge ' + (p.badge === 'nuevo' ? 'new' : 'promo') + '">' + (p.badge === 'nuevo' ? 'NUEVO' : '-'+disc+'%') + '</span>' : '';
+    var stockBadge = (p.stock > 0 && p.stock <= 3) ? '<span class="badge" style="background:#B8960C;top:auto;bottom:8px;">Últimas ' + p.stock + '</span>' : '';
+    var overlay = sinStock ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><span style="background:rgba(0,0,0,0.7);color:#888;font-size:11px;padding:6px 12px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;">Sin stock</span></div>' : '';
+    var imgOpacity = sinStock ? 'opacity:0.4;' : '';
+    var favClass = isFav ? 'wishlist-btn active' : 'wishlist-btn';
+    var precioOrig = p.precio_original ? '<span class="price-original">' + formatPrice(p.precio_original) + '</span><span class="price-discount">-' + disc + '%</span>' : '';
+    var accion = sinStock ? '<span style="font-size:11px;color:#555;">Sin stock</span>' : '<button class="add-to-cart-btn" onclick="addToCart(' + p.id + ', event)">+ Agregar</button>';
+
+    return '<div class="' + cardClass + '" onclick="' + clickFn + '">' +
+      '<div class="product-img-placeholder" style="position:relative;background:#1a1a1a;">' +
+        '<img src="' + p.imagen + '" alt="' + p.nombre + '" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;' + imgOpacity + '" loading="lazy">' +
+        overlay + badgeHtml + stockBadge +
+        '<button class="' + favClass + '" onclick="toggleFav(' + p.id + ', event)">&#9829;</button>' +
+      '</div>' +
+      '<div class="product-info">' +
+        '<div class="product-brand">' + p.marca + '</div>' +
+        '<div class="product-name">' + p.nombre + '</div>' +
+        '<div class="product-price-row"><span class="price-current">' + formatPrice(p.precio) + '</span>' + precioOrig + '</div>' +
+        '<div class="product-meta"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' + accion + '</div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 
   const btn = document.getElementById('loadMoreBtn');
