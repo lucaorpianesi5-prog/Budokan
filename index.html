@@ -1458,64 +1458,30 @@ function checkout() {
 }
 
 function mostrarModalCheckout(total, urlMP, urlWA) {
-  // Crear modal
   const modal = document.createElement('div');
   modal.id = 'checkoutModal';
-  modal.style.cssText = `
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    z-index: 400; display: flex; align-items: center; justify-content: center;
-    padding: 20px;
-  `;
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;';
 
-  modal.innerHTML = \`
-    <div style="background: #1C1C1C; border: 1px solid #2a2a2a; border-top: 3px solid #C0392B;
-                border-radius: 6px; padding: 32px; max-width: 420px; width: 100%; text-align: center;">
-      
-      <div style="font-family: 'Noto Serif JP', serif; font-size: 40px; color: rgba(192,57,43,0.3); margin-bottom: 8px;">武</div>
-      
-      <h2 style="font-family: 'Noto Serif JP', serif; font-size: 20px; color: white; margin-bottom: 8px;">
-        Confirmar pedido
-      </h2>
-      
-      <p style="color: #6B6B6B; font-size: 13px; margin-bottom: 24px;">
-        Total a pagar
-      </p>
+  const div = document.createElement('div');
+  div.style.cssText = 'background:#1C1C1C;border:1px solid #2a2a2a;border-top:3px solid #C0392B;border-radius:6px;padding:32px;max-width:420px;width:100%;text-align:center;';
 
-      <div style="font-family: 'Noto Serif JP', serif; font-size: 36px; font-weight: 700;
-                  color: #C0392B; margin-bottom: 28px;">
-        \${formatPrice(total)}
-      </div>
+  div.innerHTML =
+    '<div style="font-family:Noto Serif JP,serif;font-size:40px;color:rgba(192,57,43,0.3);margin-bottom:8px;">武</div>' +
+    '<h2 style="font-family:Noto Serif JP,serif;font-size:20px;color:white;margin-bottom:8px;">Confirmar pedido</h2>' +
+    '<p style="color:#6B6B6B;font-size:13px;margin-bottom:24px;">Total a pagar</p>' +
+    '<div style="font-family:Noto Serif JP,serif;font-size:36px;font-weight:700;color:#C0392B;margin-bottom:28px;">' + formatPrice(total) + '</div>' +
+    '<p style="color:#888;font-size:12px;line-height:1.7;margin-bottom:28px;">Al continuar se abrirán dos ventanas:<br>' +
+    '<strong style="color:#F5F0E8;">① MercadoPago</strong> para completar el pago<br>' +
+    '<strong style="color:#25D366;">② WhatsApp</strong> para confirmar tu pedido</p>' +
+    '<button id="btnPagar" style="width:100%;background:#C0392B;color:white;border:none;padding:14px;font-family:Inter,sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:2px;margin-bottom:10px;">💳 Pagar con MercadoPago</button>' +
+    '<button id="btnCancelar" style="width:100%;background:transparent;color:#6B6B6B;border:1px solid #333;padding:10px;font-family:Inter,sans-serif;font-size:12px;cursor:pointer;border-radius:2px;letter-spacing:1px;">Volver al carrito</button>';
 
-      <p style="color: #888; font-size: 12px; line-height: 1.7; margin-bottom: 28px;">
-        Al continuar se abrirán dos ventanas:<br>
-        <strong style="color: #F5F0E8;">① MercadoPago</strong> para completar el pago<br>
-        <strong style="color: #25D366;">② WhatsApp</strong> para confirmar tu pedido
-      </p>
-
-      <button onclick="confirmarPago('${urlMP}', '${urlWA}')" style="
-        width: 100%; background: #C0392B; color: white; border: none;
-        padding: 14px; font-family: 'Inter', sans-serif; font-size: 14px;
-        font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-        cursor: pointer; border-radius: 2px; margin-bottom: 10px;
-        transition: background .2s;
-      " onmouseover="this.style.background='#922B21'" onmouseout="this.style.background='#C0392B'">
-        💳 Pagar con MercadoPago
-      </button>
-
-      <button onclick="document.getElementById('checkoutModal').remove()" style="
-        width: 100%; background: transparent; color: #6B6B6B; border: 1px solid #333;
-        padding: 10px; font-family: 'Inter', sans-serif; font-size: 12px;
-        cursor: pointer; border-radius: 2px; letter-spacing: 1px;
-      ">
-        Volver al carrito
-      </button>
-    </div>
-  \`;
-
+  modal.appendChild(div);
   document.body.appendChild(modal);
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) modal.remove();
-  });
+
+  document.getElementById('btnPagar').onclick = function() { confirmarPago(urlMP, urlWA); };
+  document.getElementById('btnCancelar').onclick = function() { modal.remove(); };
+  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
 }
 
 function confirmarPago(urlMP, urlWA) {
