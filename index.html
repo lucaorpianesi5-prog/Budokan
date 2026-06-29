@@ -1328,20 +1328,20 @@
 
 <script>
 // ── CONFIG ──
-const SHEET_ID = '1qNYw6OxQq3RHeJhlw9edNvA1aDONnnUrk_N0Y7II2YM';
-const API_KEY = 'AIzaSyAKq9_8xg3grrfbBTFJt2QD2ujiW6c19zw';
+var SHEET_ID = '1qNYw6OxQq3RHeJhlw9edNvA1aDONnnUrk_N0Y7II2YM';
+var API_KEY = 'AIzaSyAKq9_8xg3grrfbBTFJt2QD2ujiW6c19zw';
 
 // ── PRODUCTS DATA ──
-let PRODUCTS = [];
+var PRODUCTS = [];
 
 // ── CARGAR PRODUCTOS (API Key pública) ──
 async function loadProducts() {
   showLoading(true);
   try {
-    const range = 'A2:I100';
-    const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + range + '?key=' + API_KEY;
-    const res = await fetch(url);
-    const data = await res.json();
+    var range = 'A2:I100';
+    var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + range + '?key=' + API_KEY;
+    var res = await fetch(url);
+    var data = await res.json();
     if (data.values) {
       PRODUCTS = data.values
         .filter(function(r) { return r[0] && r[1]; })
@@ -1374,7 +1374,7 @@ async function loadProducts() {
 
 // ── LOADING STATE ──
 function showLoading(show) {
-  const grid = document.getElementById('productGrid');
+  var grid = document.getElementById('productGrid');
   if (show) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6B6B6B;">' +
       '<div style="font-family:Noto Serif JP,serif;font-size:48px;color:rgba(192,57,43,0.2);margin-bottom:16px;">武</div>' +
@@ -1392,19 +1392,19 @@ function descontarStock(itemsVendidos) {
   });
 }
 
-let cart = [];
-let currentFilter = 'todos';
-let currentCategory = 'todos';
-let searchQuery = '';
-let visibleCount = 8;
-let favorites = new Set();
+var cart = [];
+var currentFilter = 'todos';
+var currentCategory = 'todos';
+var searchQuery = '';
+var visibleCount = 8;
+var favorites = new Set();
 
 function formatPrice(n) {
   return '$' + n.toLocaleString('es-AR');
 }
 
 function getFilteredProducts() {
-  let list = [...PRODUCTS];
+  var list = [...PRODUCTS];
 
   if (currentCategory === 'venum') {
     list = list.filter(p => p.marca === 'Venum');
@@ -1413,7 +1413,7 @@ function getFilteredProducts() {
   }
 
   if (searchQuery) {
-    const q = searchQuery.toLowerCase();
+    var q = searchQuery.toLowerCase();
     list = list.filter(p =>
       p.nombre.toLowerCase().includes(q) ||
       p.marca.toLowerCase().includes(q) ||
@@ -1436,18 +1436,18 @@ function renderStars(n) {
 }
 
 function renderProducts() {
-  const grid = document.getElementById('productGrid');
-  const list = getFilteredProducts();
+  var grid = document.getElementById('productGrid');
+  var list = getFilteredProducts();
 
   if (list.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#6B6B6B;">
-      <div style="font-size:40px;margin-bottom:12px;">🥋</div>
-      <div>No hay productos en esta categoría</div>
-    </div>`;
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:#6B6B6B;">' +
+      '<div style="font-size:40px;margin-bottom:12px;">🥋</div>' +
+      '<div>No hay productos en esta categoría</div>' +
+      '</div>';
     return;
   }
 
-  const slice = list.slice(0, visibleCount);
+  var slice = list.slice(0, visibleCount);
 
   grid.innerHTML = slice.map(function(p) {
     var disc = p.precio_original ? Math.round((1 - p.precio/p.precio_original)*100) : 0;
@@ -1478,7 +1478,7 @@ function renderProducts() {
     '</div>';
   }).join('');
 
-  const btn = document.getElementById('loadMoreBtn');
+  var btn = document.getElementById('loadMoreBtn');
   btn.style.display = list.length > visibleCount ? 'inline-block' : 'none';
 }
 
@@ -1729,12 +1729,12 @@ function changeQtyKey(key, delta) {
 }
 
 function updateCart() {
-  const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
-  const count = cart.reduce((s, i) => s + i.qty, 0);
+  var total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
+  var count = cart.reduce((s, i) => s + i.qty, 0);
   document.getElementById('cartBadge').textContent = count;
   document.getElementById('cartTotal').textContent = formatPrice(total);
 
-  const el = document.getElementById('cartItems');
+  var el = document.getElementById('cartItems');
   if (cart.length === 0) {
     el.innerHTML = '<div class="cart-empty"><span class="cart-empty-kanji">空</span>Tu carrito está vacío.<br><br>¡Agregá productos y comenzá tu entrenamiento!</div>';
     return;
@@ -1749,10 +1749,10 @@ function updateCart() {
         '<div class="cart-item-name">' + i.nombre + (detalle ? '<br><span style="font-size:10px;color:#888;">' + detalle + '</span>' : '') + '</div>' +
         '<div class="cart-item-price">' + formatPrice(i.precio) + '</div>' +
         '<div class="cart-item-controls">' +
-          '<button class="qty-btn" onclick="changeQtyKey('' + i.cartKey + '', -1)">−</button>' +
+          '<button class="qty-btn" onclick="changeQtyKey(&quot;' + i.cartKey + '&quot;, -1)">−</button>' +
           '<span class="qty-num">' + i.qty + '</span>' +
-          '<button class="qty-btn" onclick="changeQtyKey('' + i.cartKey + '', +1)">+</button>' +
-          '<button class="remove-item" onclick="removeFromCartKey('' + i.cartKey + '')">🗑</button>' +
+          '<button class="qty-btn" onclick="changeQtyKey(&quot;' + i.cartKey + '&quot;, +1)">+</button>' +
+          '<button class="remove-item" onclick="removeFromCartKey(&quot;' + i.cartKey + '&quot;)">🗑</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1760,8 +1760,8 @@ function updateCart() {
 }
 
 function toggleCart() {
-  const drawer = document.getElementById('cartDrawer');
-  const overlay = document.getElementById('overlay');
+  var drawer = document.getElementById('cartDrawer');
+  var overlay = document.getElementById('overlay');
   drawer.classList.toggle('open');
   overlay.classList.toggle('open');
 }
@@ -1779,9 +1779,9 @@ function toggleFav(id, e) {
 }
 
 // ── TOAST ──
-let toastTimer;
+var toastTimer;
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
@@ -1794,30 +1794,30 @@ function checkout() {
     showToast('⚠️ Tu carrito está vacío');
     return;
   }
-  const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
+  var total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
   var lineas = cart.map(function(i) {
     var det = i.talle ? ' (' + i.talle + (i.color ? '/' + i.color : '') + ')' : (i.color ? ' (' + i.color + ')' : '');
     return '• ' + i.nombre + det + ' x' + i.qty + ' — ' + formatPrice(i.precio * i.qty);
   }).join('%0A');
-  const totalStr = formatPrice(total);
-  const fecha = new Date().toLocaleDateString('es-AR');
-  const mensajeWA =
-    `🥋 *Nuevo pedido BUDOKAN* 🥋%0A` +
-    `📅 ${fecha}%0A%0A` +
-    `${lineas}%0A%0A` +
-    `💰 *TOTAL: ${totalStr}*%0A%0A` +
-    `_El cliente completará el pago por MercadoPago._`;
-  const numeroWA = '5493516864308';
-  const urlWA = `https://wa.me/${numeroWA}?text=${mensajeWA}`;
-  const urlMP = 'https://link.mercadopago.com.ar/budokanstore';
+  var totalStr = formatPrice(total);
+  var fecha = new Date().toLocaleDateString('es-AR');
+  var mensajeWA =
+    '🥋 *Nuevo pedido BUDOKAN* 🥋%0A' +
+    '📅 ' + fecha + '%0A%0A' +
+    lineas + '%0A%0A' +
+    '💰 *TOTAL: ' + totalStr + '*%0A%0A' +
+    '_El cliente completará el pago por MercadoPago._';
+  var numeroWA = '5493516864308';
+  var urlWA = 'https://wa.me/' + numeroWA + '?text=' + mensajeWA;
+  var urlMP = 'https://link.mercadopago.com.ar/budokanstore';
   mostrarModalCheckout(total, urlMP, urlWA);
 }
 
 function mostrarModalCheckout(total, urlMP, urlWA) {
-  const modal = document.createElement('div');
+  var modal = document.createElement('div');
   modal.id = 'checkoutModal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;';
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.style.cssText = 'background:#1C1C1C;border:1px solid #2a2a2a;border-top:3px solid #C0392B;border-radius:6px;padding:32px;max-width:420px;width:100%;text-align:center;';
   div.innerHTML =
     '<div style="font-family:Noto Serif JP,serif;font-size:40px;color:rgba(192,57,43,0.3);margin-bottom:8px;">武</div>' +
