@@ -1346,20 +1346,21 @@ async function loadProducts() {
       PRODUCTS = data.values
         .filter(function(r) { return r[0] && r[1]; })
         .map(function(r) {
-          function cel(i) { return (r[i] !== undefined && r[i] !== null) ? String(r[i]).trim() : ''; }
+          var tallesRaw = r.length > 9 ? String(r[9]).trim() : '';
+          var coloresRaw = r.length > 10 ? String(r[10]).trim() : '';
           return {
-            id: parseInt(cel(0)),
-            nombre: cel(1),
-            marca: cel(2),
-            precio: parseInt(cel(3)) || 0,
-            precio_original: cel(4) ? parseInt(cel(4)) : null,
-            categoria: cel(5) || 'otros',
-            imagen: cel(6),
-            stock: parseInt(cel(7)) || 0,
-            badge: cel(8) || null,
-            talles: cel(9) ? cel(9).split(',').map(function(t){ return t.trim(); }).filter(function(t){ return t; }) : [],
-            colores: cel(10) ? cel(10).split(',').map(function(c){ return c.trim(); }).filter(function(c){ return c; }) : [],
-            descripcion: cel(11) || '',
+            id: parseInt(r[0]) || 0,
+            nombre: r[1] ? String(r[1]).trim() : '',
+            marca: r[2] ? String(r[2]).trim() : '',
+            precio: parseInt(r[3]) || 0,
+            precio_original: (r[4] && r[4] !== '') ? parseInt(r[4]) : null,
+            categoria: r[5] ? String(r[5]).trim() : 'otros',
+            imagen: r[6] ? String(r[6]).trim() : '',
+            stock: parseInt(r[7]) || 0,
+            badge: (r[8] && r[8] !== '') ? String(r[8]).trim() : null,
+            talles: tallesRaw ? tallesRaw.split(',').map(function(t){ return t.trim(); }).filter(function(t){ return t !== ''; }) : [],
+            colores: coloresRaw ? coloresRaw.split(',').map(function(c){ return c.trim(); }).filter(function(c){ return c !== ''; }) : [],
+            descripcion: (r[11] && r[11] !== '') ? String(r[11]).trim() : '',
             isFav: false
           };
         });
