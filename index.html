@@ -1597,7 +1597,7 @@ function abrirModal(id) {
   var tallesEl = document.getElementById('modalTalles');
   if (p.talles && p.talles.length > 0) {
     tallesEl.innerHTML = p.talles.map(function(t) {
-      return '<button class="selector-opt" onclick="selTalle(this, '' + t + '')">' + t + '</button>';
+      return '<button class="selector-opt" onclick="selTalle(this, &quot;' + t + '&quot;)">' + t + '</button>';
     }).join('');
     tallesWrap.style.display = 'block';
   } else {
@@ -1609,7 +1609,7 @@ function abrirModal(id) {
   var coloresEl = document.getElementById('modalColores');
   if (p.colores && p.colores.length > 0) {
     coloresEl.innerHTML = p.colores.map(function(c) {
-      return '<button class="selector-opt" onclick="selColor(this, '' + c + '')">' + c + '</button>';
+      return '<button class="selector-opt" onclick="selColor(this, &quot;' + c + '&quot;)">' + c + '</button>';
     }).join('');
     coloresWrap.style.display = 'block';
   } else {
