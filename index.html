@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUDOKAN 武道館 Store</title>
+<title>BUDOKAN 武道館 — Artes Marciales & Deportes de Contacto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -1115,7 +1115,7 @@
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
-      
+      <span class="logo-kanji">武</span>
       <div class="logo-text">
         <span class="logo-main">BUDOKAN</span>
         <span class="logo-sub">Artes Marciales & Contacto</span>
@@ -1155,7 +1155,7 @@
   <div class="hero-brush"></div>
   <div class="hero-kanji-bg">武道</div>
   <div class="hero-content">
-    <p class="hero-eyebrow">⛩ 武道館 · Nueva temporada 2025</p>
+    <p class="hero-eyebrow">⛩ 武道館 · Nueva temporada 2026</p>
     <h1 class="hero-title">
       Bienvenido a
       <span>BUDOKAN</span>
@@ -1163,7 +1163,7 @@
     <p class="hero-desc">武道館 — El Hall de las Artes Marciales. Equipamiento profesional de competición para quienes eligen el camino del Budo.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="scrollToProducts()">Ver productos</button>
-      <button class="btn-outline">Nuestra historia</button>
+      <button class="btn-outline" onclick="window.open('https://budokanweb.com', '_blank')">Nuestra historia</button>
     </div>
     <div class="hero-stats">
       <div>
@@ -1201,7 +1201,7 @@
   </div>
   <div class="offer-card" style="background: linear-gradient(135deg, #1a3a1a, #2d5a2d);">
     <div class="offer-label">Nuevo ingreso</div>
-    <div class="offer-title">Equipos<br>Kendo 2025</div>
+    <div class="offer-title">Equipos<br>Kendo 2026</div>
     <div class="offer-sub">Colección oficial importada</div>
   </div>
   <div class="offer-card" style="background: linear-gradient(135deg, #1a1a3a, #2d2d5a);">
@@ -1216,7 +1216,7 @@
 
   <div class="section-header">
     <h2 class="section-title">Todos los productos</h2>
-    <span class="see-all">Ver todo →</span>
+    <span class="see-all" onclick="scrollToProducts()">Ver todo →</span>
   </div>
 
   <!-- FILTER BAR -->
@@ -1270,7 +1270,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2025 <span>BUDOKAN 武道館</span> · Todos los derechos reservados</span>
+    <span class="footer-copy">© 2026 <span>BUDOKAN 武道館</span> · Todos los derechos reservados</span>
     <span class="footer-copy">Sarmiento 375, Córdoba · +54 351-686-4308</span>
   </div>
 </footer>
@@ -1338,7 +1338,7 @@ var PRODUCTS = [];
 async function loadProducts() {
   showLoading(true);
   try {
-    var range = 'A2:I100';
+    var range = 'A2:L100';
     var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/' + range + '?key=' + API_KEY;
     var res = await fetch(url);
     var data = await res.json();
@@ -1405,6 +1405,15 @@ function formatPrice(n) {
   return '$' + n.toLocaleString('es-AR');
 }
 
+function escaparHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function getFilteredProducts() {
   var list = [...PRODUCTS];
 
@@ -1427,15 +1436,11 @@ function getFilteredProducts() {
   if (currentFilter === 'nuevo') list = list.filter(p => p.badge === 'nuevo');
   if (currentFilter === 'precio-asc') list.sort((a,b) => a.precio - b.precio);
   if (currentFilter === 'precio-desc') list.sort((a,b) => b.precio - a.precio);
-  if (currentFilter === 'sin-stock') list = list.filter(p => p.stock === 0);
-  if (currentFilter === 'venum') list = list.filter(p => p.marca === 'Venum');
+  if (currentFilter === 'mejor-valorado') list.sort((a,b) => b.stock - a.stock);
 
   return list;
 }
 
-function renderStars(n) {
-  return '★'.repeat(5);
-}
 
 function renderProducts() {
   var grid = document.getElementById('productGrid');
@@ -1467,15 +1472,15 @@ function renderProducts() {
 
     return '<div class="' + cardClass + '" onclick="' + clickFn + '">' +
       '<div class="product-img-placeholder" style="position:relative;background:#1a1a1a;">' +
-        '<img src="' + p.imagen + '" alt="' + p.nombre + '" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;' + imgOpacity + '" loading="lazy">' +
+        '<img src="' + escaparHTML(p.imagen) + '" alt="' + escaparHTML(p.nombre) + '" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;' + imgOpacity + '" loading="lazy">' +
         overlay + badgeHtml + stockBadge +
         '<button class="' + favClass + '" onclick="toggleFav(' + p.id + ', event)">&#9829;</button>' +
       '</div>' +
       '<div class="product-info">' +
-        '<div class="product-brand">' + p.marca + '</div>' +
-        '<div class="product-name">' + p.nombre + '</div>' +
+        '<div class="product-brand">' + escaparHTML(p.marca) + '</div>' +
+        '<div class="product-name">' + escaparHTML(p.nombre) + '</div>' +
         '<div class="product-price-row"><span class="price-current">' + formatPrice(p.precio) + '</span>' + precioOrig + '</div>' +
-        '<div class="product-meta"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' + accion + '</div>' +
+        '<div class="product-meta"><span style="font-size:11px;font-weight:600;color:' + (sinStock ? '#555' : (p.stock <= 3 ? '#B8960C' : '#4aaa77')) + ';">' + (sinStock ? '✕ Sin stock' : (p.stock <= 3 ? '⚠ Últimas ' + p.stock : '✓ En stock')) + '</span>' + accion + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -1505,11 +1510,6 @@ function applyFilter(f, el) {
   renderProducts();
 }
 
-function filterProducts() {
-  searchQuery = document.getElementById('searchInput').value;
-  visibleCount = 8;
-  renderProducts();
-}
 
 function onSearchInput() {
   var q = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -1528,9 +1528,9 @@ function onSearchInput() {
 
   box.innerHTML = matches.map(function(p) {
     return '<div class="suggestion-item" onclick="seleccionarSugerencia(' + p.id + ')">' +
-      '<img class="suggestion-img" src="' + p.imagen + '" alt="' + p.nombre + '">' +
+      '<img class="suggestion-img" src="' + escaparHTML(p.imagen) + '" alt="' + escaparHTML(p.nombre) + '">' +
       '<div>' +
-        '<div class="suggestion-name">' + p.nombre + '</div>' +
+        '<div class="suggestion-name">' + escaparHTML(p.nombre) + '</div>' +
         '<div class="suggestion-price">' + formatPrice(p.precio) + '</div>' +
       '</div>' +
     '</div>';
@@ -1692,32 +1692,12 @@ function scrollToProducts() {
   document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── CART ──
-function addToCart(id, e) {
-  if (e) e.stopPropagation();
-  abrirModal(id);
-}
-
-function removeFromCart(id) {
-  cart = cart.filter(function(i) { return i.id !== id; });
-  updateCart();
-}
 
 function removeFromCartKey(key) {
   cart = cart.filter(function(i) { return i.cartKey !== key; });
   updateCart();
 }
 
-function changeQty(id, delta) {
-  var item = cart.find(function(i) { return i.id === id; });
-  if (!item) return;
-  var product = PRODUCTS.find(function(p) { return p.id === id; });
-  var newQty = item.qty + delta;
-  if (newQty > product.stock) { showToast('⚠️ No hay más stock'); return; }
-  item.qty = newQty;
-  if (item.qty <= 0) cart = cart.filter(function(i) { return i.id !== id; });
-  updateCart();
-}
 
 function changeQtyKey(key, delta) {
   var item = cart.find(function(i) { return i.cartKey === key; });
@@ -1743,12 +1723,12 @@ function updateCart() {
   }
   el.innerHTML = cart.map(function(i) {
     var detalle = '';
-    if (i.talle) detalle += i.talle;
-    if (i.color) detalle += (detalle ? ' · ' : '') + i.color;
+    if (i.talle) detalle += escaparHTML(i.talle);
+    if (i.color) detalle += (detalle ? ' · ' : '') + escaparHTML(i.color);
     return '<div class="cart-item">' +
-      '<div class="cart-item-img" style="overflow:hidden;border-radius:3px;"><img src="' + i.imagen + '" style="width:60px;height:60px;object-fit:cover;"></div>' +
+      '<div class="cart-item-img" style="overflow:hidden;border-radius:3px;"><img src="' + escaparHTML(i.imagen) + '" style="width:60px;height:60px;object-fit:cover;"></div>' +
       '<div class="cart-item-info">' +
-        '<div class="cart-item-name">' + i.nombre + (detalle ? '<br><span style="font-size:10px;color:#888;">' + detalle + '</span>' : '') + '</div>' +
+        '<div class="cart-item-name">' + escaparHTML(i.nombre) + (detalle ? '<br><span style="font-size:10px;color:#888;">' + detalle + '</span>' : '') + '</div>' +
         '<div class="cart-item-price">' + formatPrice(i.precio) + '</div>' +
         '<div class="cart-item-controls">' +
           '<button class="qty-btn" onclick="changeQtyKey(&quot;' + i.cartKey + '&quot;, -1)">−</button>' +
@@ -1800,17 +1780,17 @@ function checkout() {
   var lineas = cart.map(function(i) {
     var det = i.talle ? ' (' + i.talle + (i.color ? '/' + i.color : '') + ')' : (i.color ? ' (' + i.color + ')' : '');
     return '• ' + i.nombre + det + ' x' + i.qty + ' — ' + formatPrice(i.precio * i.qty);
-  }).join('%0A');
+  }).join('\n');
   var totalStr = formatPrice(total);
   var fecha = new Date().toLocaleDateString('es-AR');
   var mensajeWA =
-    '🥋 *Nuevo pedido BUDOKAN* 🥋%0A' +
-    '📅 ' + fecha + '%0A%0A' +
-    lineas + '%0A%0A' +
-    '💰 *TOTAL: ' + totalStr + '*%0A%0A' +
+    '🥋 *Nuevo pedido BUDOKAN* 🥋\n' +
+    '📅 ' + fecha + '\n\n' +
+    lineas + '\n\n' +
+    '💰 *TOTAL: ' + totalStr + '*\n\n' +
     '_El cliente completará el pago por MercadoPago._';
   var numeroWA = '5493516864308';
-  var urlWA = 'https://wa.me/' + numeroWA + '?text=' + mensajeWA;
+  var urlWA = 'https://wa.me/' + numeroWA + '?text=' + encodeURIComponent(mensajeWA);
   var urlMP = 'https://link.mercadopago.com.ar/budokanstore';
   mostrarModalCheckout(total, urlMP, urlWA);
 }
@@ -1823,12 +1803,15 @@ function mostrarModalCheckout(total, urlMP, urlWA) {
   div.style.cssText = 'background:#1C1C1C;border:1px solid #2a2a2a;border-top:3px solid #C0392B;border-radius:6px;padding:32px;max-width:420px;width:100%;text-align:center;';
   div.innerHTML =
     '<div style="font-family:Noto Serif JP,serif;font-size:40px;color:rgba(192,57,43,0.3);margin-bottom:8px;">武</div>' +
-    '<h2 style="font-family:Noto Serif JP,serif;font-size:20px;color:white;margin-bottom:8px;">Confirmar pedido</h2>' +
-    '<p style="color:#6B6B6B;font-size:13px;margin-bottom:24px;">Total a pagar</p>' +
-    '<div style="font-family:Noto Serif JP,serif;font-size:36px;font-weight:700;color:#C0392B;margin-bottom:28px;">' + formatPrice(total) + '</div>' +
-    '<p style="color:#888;font-size:12px;line-height:1.7;margin-bottom:28px;">Al continuar se abrirán dos ventanas:<br>' +
-    '<strong style="color:#F5F0E8;">① MercadoPago</strong> para completar el pago<br>' +
-    '<strong style="color:#25D366;">② WhatsApp</strong> para confirmar tu pedido</p>' +
+    '<h2 style="font-family:Noto Serif JP,serif;font-size:20px;color:white;margin-bottom:4px;">Confirmar pedido</h2>' +
+    '<p style="color:#6B6B6B;font-size:13px;margin-bottom:16px;">Total a pagar</p>' +
+    '<div style="background:rgba(192,57,43,0.1);border:2px solid #C0392B;border-radius:6px;padding:16px 24px;margin-bottom:12px;">' +
+      '<div style="font-family:Noto Serif JP,serif;font-size:40px;font-weight:700;color:#C0392B;line-height:1;">' + formatPrice(total) + '</div>' +
+      '<div style="font-size:11px;color:#aaa;letter-spacing:1px;margin-top:8px;text-transform:uppercase;">⚠ Anotá este monto antes de continuar</div>' +
+    '</div>' +
+    '<p style="color:#888;font-size:12px;line-height:1.8;margin-bottom:28px;">Al continuar se abrirán dos ventanas:<br>' +
+    '<strong style="color:#F5F0E8;">① MercadoPago</strong> — ingresá el monto indicado arriba<br>' +
+    '<strong style="color:#25D366;">② WhatsApp</strong> — para confirmar tu pedido</p>' +
     '<button id="btnPagar" style="width:100%;background:#C0392B;color:white;border:none;padding:14px;font-family:Inter,sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:2px;margin-bottom:10px;">💳 Pagar con MercadoPago</button>' +
     '<button id="btnCancelar" style="width:100%;background:transparent;color:#6B6B6B;border:1px solid #333;padding:10px;font-family:Inter,sans-serif;font-size:12px;cursor:pointer;border-radius:2px;letter-spacing:1px;">Volver al carrito</button>';
   modal.appendChild(div);
@@ -1839,15 +1822,18 @@ function mostrarModalCheckout(total, urlMP, urlWA) {
 }
 
 function confirmarPago(urlMP, urlWA) {
-  // Descontar stock
   descontarStock(cart.map(i => ({ id: i.id, qty: i.qty, stock: i.stock })));
-  window.open(urlMP, '_blank');
-  setTimeout(() => window.open(urlWA, '_blank'), 800);
+  var winMP = window.open(urlMP, '_blank');
+  var winWA = window.open(urlWA, '_blank');
   document.getElementById('checkoutModal')?.remove();
   cart = [];
   updateCart();
   toggleCart();
-  showToast('✅ ¡Redirigiendo a MercadoPago y WhatsApp!');
+  if (!winMP || !winWA) {
+    showToast('⚠️ Habilitá los popups para abrir MercadoPago y WhatsApp');
+  } else {
+    showToast('✅ ¡Redirigiendo a MercadoPago y WhatsApp!');
+  }
   renderProducts();
 }
 
