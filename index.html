@@ -1175,8 +1175,8 @@
         <div class="hero-stat-label">Artes marciales</div>
       </div>
       <div>
-        <div class="hero-stat-num">8k+</div>
-        <div class="hero-stat-label">Estudiantes</div>
+        <div class="hero-stat-num">25</div>
+        <div class="hero-stat-label">Años de experiencia</div>
       </div>
     </div>
   </div>
@@ -1251,7 +1251,7 @@
     <div>
       <div class="footer-col-title">Tienda</div>
       <ul class="footer-links">
-        <li><a href="#">Productos</a></li>
+        <li><a href="#" onclick="scrollToProducts(); return false;">Productos</a></li>
         <li><a href="#">Novedades</a></li>
         <li><a href="#">Ofertas</a></li>
         <li><a href="#">Marcas</a></li>
@@ -1261,11 +1261,11 @@
     <div>
       <div class="footer-col-title">Ayuda</div>
       <ul class="footer-links">
-        <li><a href="#">Contacto</a></li>
+        <li><a href="https://wa.me/5493516864308" target="_blank">Contacto</a></li>
         <li><a href="#">Envíos</a></li>
         <li><a href="#">Devoluciones</a></li>
         <li><a href="#">Mi cuenta</a></li>
-        <li><a href="#">Instagram</a></li>
+        <li><a href="https://www.instagram.com/budokan_argentina?igsh=MTJocHk1cmM3czd3Zg==" target="_blank">Instagram</a></li>
       </ul>
     </div>
   </div>
@@ -1275,8 +1275,7 @@
   </div>
 </footer>
 
-<!-- CART DRAWER -->
-<!-- PRODUCT MODAL -->
+<!-- MODAL PRODUCTO -->
 <div class="product-modal-overlay" id="productModalOverlay" onclick="cerrarModal(event)">
   <div class="product-modal" id="productModal">
     <div class="modal-img-wrap">
@@ -1307,6 +1306,7 @@
   </div>
 </div>
 
+<!-- CART DRAWER -->
 <div class="overlay" id="overlay" onclick="toggleCart()"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="drawer-header">
@@ -1400,6 +1400,7 @@ var currentCategory = 'todos';
 var searchQuery = '';
 var visibleCount = 8;
 var favorites = new Set();
+var searchDebounceTimer = null;
 
 function formatPrice(n) {
   return '$' + n.toLocaleString('es-AR');
@@ -1513,9 +1514,12 @@ function applyFilter(f, el) {
 
 function onSearchInput() {
   var q = document.getElementById('searchInput').value.trim().toLowerCase();
-  searchQuery = q;
-  visibleCount = 8;
-  renderProducts();
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(function() {
+    searchQuery = q;
+    visibleCount = 8;
+    renderProducts();
+  }, q.length === 0 ? 0 : 200);
 
   var box = document.getElementById('searchSuggestions');
   if (q.length < 2) { box.style.display = 'none'; return; }
@@ -1757,7 +1761,13 @@ function toggleFav(id, e) {
     favorites.add(id);
     showToast('♥ Guardado en favoritos');
   }
-  renderProducts();
+  // Actualizar solo el botón afectado, sin re-renderizar todo el grid
+  document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+    var attr = btn.getAttribute('onclick') || '';
+    if (attr.indexOf('toggleFav(' + id + ',') !== -1) {
+      btn.classList.toggle('active', favorites.has(id));
+    }
+  });
 }
 
 // ── TOAST ──
