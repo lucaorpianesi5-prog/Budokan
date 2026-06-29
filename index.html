@@ -1325,7 +1325,6 @@ function renderProducts() {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#6B6B6B;">
       <div style="font-size:40px;margin-bottom:12px;">🥋</div>
       <div>No hay productos en esta categoría</div>
-      ${!accessToken ? '<br><button onclick="signIn()" style="margin-top:16px;background:#C0392B;color:white;border:none;padding:10px 24px;cursor:pointer;border-radius:2px;font-family:Inter,sans-serif;font-size:13px;letter-spacing:1px;">🔑 Conectar con Google para ver productos</button>' : ''}
     </div>`;
     return;
   }
